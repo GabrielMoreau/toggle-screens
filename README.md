@@ -12,7 +12,7 @@ cp toggle-screens /usr/bin/toggle-screens
 chmod 0755 /usr/local/bin/toggle-screens.sh
 
 
-cp 00-toggle-screens.ini /etc/dconf/db/local.d/00-toggle-screens
+cp 90-toggle-screens.ini /etc/dconf/db/local.d/90-toggle-screens.ini
 chmod 0644 /etc/dconf/db/local.d/00-toggle-screens
 
 dconf update
