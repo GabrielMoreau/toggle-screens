@@ -26,8 +26,8 @@ cp toggle-screens                   "${tmp_folder}/usr/bin/"
 cp LICENSE.md                "${tmp_folder}/usr/share/toggle-screens/"
 cp AUTHORS.md                "${tmp_folder}/usr/share/toggle-screens/"
 cp COPYRIGHT.md              "${tmp_folder}/usr/share/toggle-screens/"
-cp README.md                  "${tmp_folder}/usr/share/toggle-screens/"
-cp 90-toggle-screens.ini      "${tmp_folder}/etc/dconf/db/local.d/90-toggle-screens.ini"
+cp README.md                 "${tmp_folder}/usr/share/toggle-screens/"
+cp 90-toggle-screens.ini     "${tmp_folder}/etc/dconf/db/local.d/90-toggle-screens.ini"
 #cp toggle-screens.bash_completion   "${tmp_folder}/etc/bash_completion.d/toggle-screens"
 chmod -R a+rx        "${tmp_folder}/usr/bin/toggle-screens"
 chmod -R a+rX,go-w   "${tmp_folder}/usr"
@@ -44,7 +44,7 @@ Version: ${CODE_VERSION}-${PKG_VERSION}
 Section: utils
 Tag: implemented-in::bash, interface::commandline, role::program
 Priority: optional
-Depends: bash, awk, x11-xserver-utils, wmctrl, dconf-cli
+Depends: bash, sed, awk, x11-xserver-utils, wmctrl, dconf-cli
 Recommends: apt-file
 Architecture: all
 Installed-Size: $(du -ks "${tmp_folder}"|cut -f 1)
