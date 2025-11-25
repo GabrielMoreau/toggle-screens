@@ -1,0 +1,76 @@
+#!/bin/bash
+#
+# 2025/11/25 Gabriel Moreau <Gabriel.Moreau@univ-grenoble-alpes.fr>
+
+trap '[ -n "${tmp_folder}" -a -d "${tmp_folder}" ] && rm -rf "${tmp_folder}"' QUIT
+
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+export LANG=C
+
+tmp_folder=$(mktemp --directory /tmp/toggle-screens-XXXXXX)
+[ -n "${tmp_folder}" ] && [ -d "${tmp_folder}" ] || exit 1
+
+# Set Name and Version
+PKG_NAME=toggle-screens
+CODE_VERSION=$(grep '^VERSION=' toggle-screens | cut -f 2 -d "'")
+PKG_VERSION=1
+
+# Create future tree
+mkdir -p "${tmp_folder}/usr/bin"
+#mkdir -p "${tmp_folder}/usr/share/man/man1"
+mkdir -p "${tmp_folder}/etc/dconf/db/local.d"
+mkdir -p "${tmp_folder}/usr/share/toggle-screens"
+#mkdir -p "${tmp_folder}/etc/bash_completion.d"
+cp toggle-screens                   "${tmp_folder}/usr/bin/"
+#pod2man toggle-screens.pod | gzip > "${tmp_folder}/usr/share/man/man1/toggle-screens.1.gz" # Manual
+#cp LICENSE.md                "${tmp_folder}/usr/share/toggle-screens/"
+#cp AUTHORS.md                "${tmp_folder}/usr/share/toggle-screens/"
+#cp COPYRIGHT.md              "${tmp_folder}/usr/share/toggle-screens/"
+cp README.md                  "${tmp_folder}/usr/share/toggle-screens/"
+cp 90-toggle-screens.ini      "${tmp_folder}/etc/dconf/db/local.d/90-toggle-screens.ini"
+#cp toggle-screens.bash_completion   "${tmp_folder}/etc/bash_completion.d/toggle-screens"
+chmod -R a+rx        "${tmp_folder}/usr/bin/toggle-screens"
+chmod -R a+rX,go-w   "${tmp_folder}/usr"
+chmod -R a+rX,go-w   "${tmp_folder}/etc"
+
+# Data archive
+rm -f "${tmp_folder}/data.tar.gz"
+(cd "${tmp_folder}" || exit 1; tar --owner root --group root -czf data.tar.gz ./usr ./etc)
+
+# Control file
+cat <<END > "${tmp_folder}/control"
+Package: ${PKG_NAME}
+Version: ${CODE_VERSION}-${PKG_VERSION}
+Section: utils
+Tag: implemented-in::bash, interface::commandline, role::program
+Priority: optional
+Depends: bash, awk, x11-xserver-utils, wmctrl, dconf-cli
+Recommends: apt-file
+Architecture: all
+Installed-Size: $(du -ks "${tmp_folder}"|cut -f 1)
+Maintainer: Gabriel Moreau <Gabriel.Moreau@univ-grenoble-alpes.fr>
+Description: toggle windows on screen 0 to screen 1 and vice versa
+Homepage: https://gricad-gitlab.univ-grenoble-alpes.fr/legi/soft/trokata/toggle-screens
+END
+
+# Post install and post remove
+cat <<END > "${tmp_folder}/postinst"
+#!/bin/sh
+
+/usr/bin/dconf update
+END
+cp "${tmp_folder}/postinst" "${tmp_folder}/postrm"
+chmod a+rx,go-w "${tmp_folder}/postinst" "${tmp_folder}/postrm"
+
+# Control archive
+rm -f "${tmp_folder}/control.tar.gz"
+(cd "${tmp_folder}" || exit 1; tar --owner root --group root -czf control.tar.gz control postinst postrm)
+
+# Format deb package
+echo 2.0 > "${tmp_folder}/debian-binary"
+
+# Create package (control before data)
+ar -r "${PKG_NAME}_${CODE_VERSION}-${PKG_VERSION}_all.deb" "${tmp_folder}/debian-binary" "${tmp_folder}/control.tar.gz" "${tmp_folder}/data.tar.gz"
+      
+# Clean
+rm -rf "${tmp_folder}"
