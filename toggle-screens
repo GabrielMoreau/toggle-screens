@@ -9,7 +9,7 @@
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 export LANG=C
 
-VERSION='0.2.1'
+VERSION='0.2.2'
 
 # Recover both screens (xrandr order = screen0 then screen1)
 screens=($(xrandr | awk '/ connected/ {print $1}'))
