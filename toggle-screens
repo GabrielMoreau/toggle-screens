@@ -1,0 +1,64 @@
+#!/bin/bash
+#
+# 2025/11/25 Gabriel Moreau <Gabriel.Moreau@univ-grenoble-alpes.fr>
+#
+# toggle-screens
+#
+## Binaries: xrandr awk wmctrl dconf
+
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+export LANG=C
+
+VERSION='0.2.1'
+
+# Recover both screens (xrandr order = screen0 then screen1)
+screens=($(xrandr | awk '/ connected/ {print $1}'))
+
+screen0="${screens[0]}"
+screen1="${screens[1]}"
+
+# Recover the geometry
+geo0=$(xrandr | sed 's/primary//g;' | awk -v scr="$screen0" '/ connected/ && $1==scr {print $3}')
+geo1=$(xrandr | sed 's/primary//g;' | awk -v scr="$screen1" '/ connected/ && $1==scr {print $3}')
+
+# Extract X and Y
+x0=$(echo "$geo0" | cut -d+ -f2)
+y0=$(echo "$geo0" | cut -d+ -f3)
+
+x1=$(echo "$geo1" | cut -d+ -f2)
+y1=$(echo "$geo1" | cut -d+ -f3)
+
+# Detect if a window is on screen 0
+on_screen_0=false
+
+while read -r id x y w h
+do
+	# If the window has an X coordinate >= 0 and < screen0 width → it is on screen0
+	if [ "$x" -ge "$x0" ] && [ "$x" -lt "$((x0 + $(echo $geo0 | cut -dx -f1)))" ]
+	then
+		on_screen_0=true
+		break
+	fi
+done < <(wmctrl -lG | awk '{print $1, $3, $4, $5, $6}')
+
+# If on_screen_0 = true → send everything to screen1, otherwise to screen0
+if $on_screen_0
+then
+	dest_x="$x1"
+	dest_y="$y1"
+    primary="$screen1"
+else
+	dest_x="$x0"
+	dest_y="$y0"
+    primary="$screen0"
+fi
+
+
+# Changer l’écran primary
+xrandr --output "$primary" --primary
+
+# Move all windows
+for id in $(wmctrl -l | awk '{print $1}')
+do
+	wmctrl -i -r "$id" -e "0,$dest_x,$dest_y,-1,-1"
+done
