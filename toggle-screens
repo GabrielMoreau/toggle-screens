@@ -9,7 +9,33 @@
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 export LANG=C
 
-VERSION='0.3.1'
+VERSION='0.3.2'
+
+#-----------------------------------------------------------------------
+
+# Verify that the N programs specified in the function parameters are located in the PATH folders
+verify_binaries () {
+	local -a msg=()
+	for command in "$@"
+	do
+		which "${command}" > /dev/null  2>&1 || msg+=("${command}")
+	done
+
+	local output
+	output=$(printf "%s, " "${msg[@]}")
+	output="${output%, }"
+
+	if [ -n "${output}" ]
+	then
+		echo "Error: you need the softwares for ${output}..." >&2
+		return 1
+	fi
+}
+
+#-----------------------------------------------------------------------
+
+# Verify you have xrandr and wmctrl
+verify_binaries xrandr wmctrl || exit 1
 
 # Recover both screens (xrandr order = screen0 then screen1)
 screens=($(xrandr | awk '/ connected/ {print $1}'))
@@ -46,11 +72,11 @@ if $on_screen_0
 then
 	dest_x="$x1"
 	dest_y="$y1"
-    primary="$screen1"
+	primary="$screen1"
 else
 	dest_x="$x0"
 	dest_y="$y0"
-    primary="$screen0"
+	primary="$screen0"
 fi
 
 
