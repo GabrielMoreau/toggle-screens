@@ -1,0 +1,28 @@
+=head1 NAME
+
+toggle-screens - switch all windows from screen 0 to screen 1 and vice versa
+
+=head1 SYNOPSIS
+
+ toggle-screens
+
+=head1 DESCRIPTION
+
+The C<toggle-screens> command allows you to switch all windows from screen 0 to screen 1 and vice versa.
+By default, if there is one or more windows on screen 0, it moves them from 0 to 1.
+If there are no windows on 0, it moves all windows from 1 to 0.
+
+The program runs under the X11 (Xorg) environment.
+It has not been fully tested under Wayland.
+
+
+=head1 AUTHORS
+
+Gabriel Moreau <Gabriel.Moreau@univ-grenoble-alpes.fr>, Grenoble - France
+
+
+=head1 COPYRIGHT
+
+Copyright (C) 2025, LEGI UMR 5519 / CNRS UGA G-INP, Grenoble, France.
+
+Licence: CC0 (Creative Commons Zero - https://spdx.org/licenses/CC0-1.0)
