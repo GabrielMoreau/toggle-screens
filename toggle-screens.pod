@@ -16,6 +16,15 @@ The program runs under the X11 (Xorg) environment.
 It has not been fully tested under Wayland.
 
 
+=head1 Keyboard shortcut
+
+
+The C<toggle-screens> software can be used via the keyboard shortcut mechanism built into GNOME.
+With the C<Super+T> keyboard shortcut (C<Super> == C<Win>), windows switch from one screen to another.
+
+The C<dconf> service is configured via the configuration file F</etc/dconf/db/local.d/90-toggle-screens.ini>.
+
+
 =head1 AUTHORS
 
 Gabriel Moreau <Gabriel.Moreau@univ-grenoble-alpes.fr>, Grenoble - France
