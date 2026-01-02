@@ -1,6 +1,6 @@
 # COPYRIGHT
 
-Copyright (C) 2025, LEGI UMR 5519 / CNRS UGA G-INP, Grenoble, France
+Copyright (C) 2025-2026, LEGI UMR 5519 / CNRS UGA G-INP, Grenoble, France
  http://www.legi.grenoble-inp.fr
 
 Toggle Screens allows you to switch all windows from screen 0 to screen 1 and vice versa.
