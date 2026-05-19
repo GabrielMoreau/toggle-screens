@@ -8,9 +8,17 @@ toggle-screens - switch all windows from screen 0 to screen 1 and vice versa
 
 =head1 DESCRIPTION
 
+The general idea is to easily move your entire desktop to the external monitor when you connect your laptop to it.
+Usually, this external monitor is larger and more comfortable to use.
+Manually moving all the windows becomes tedious over time.
+
 The C<toggle-screens> command allows you to switch all windows from screen 0 to screen 1 and vice versa.
-By default, if there is one or more windows on screen 0, it moves them from 0 to 1.
-If there are no windows on 0, it moves all windows from 1 to 0.
+By default, if there are one or more windows on screen 0, it moves them from screen 0 to screen 1.
+If there are no windows on screen 0, it moves all windows from screen 1 to screen 0.
+
+In addition to moving windows, C<toggle-screens> switches the main display.
+This means the main taskbar also switches to the other display.
+The program requires no additional parameters.
 
 The program runs under the X11 (Xorg) environment.
 It has not been fully tested under Wayland.
